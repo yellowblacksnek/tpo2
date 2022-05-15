@@ -1,12 +1,21 @@
 package ru.yellowblacksnek.basic;
 
-public class Ln extends MathFunction{
+import static ru.yellowblacksnek.Utils.round;
+
+public class Ln implements MathFunction{
+    protected double EPS;
+    private final int MAX_ITERATIONS = 100000;
     public Ln(double eps) {
-        super(100000, eps);
+        if(eps >= 1 || eps < 1.0e-8f) throw new IllegalArgumentException("Неподдерживаемая точность");
+        this.EPS = eps;
     }
 
+    @Override
     public double apply(double x) {
-        if(!Double.isFinite(x)) return Double.NaN;
+        if(x == Double.POSITIVE_INFINITY) return Double.POSITIVE_INFINITY;
+        if(!Double.isFinite(x) || x < 0) return Double.NaN;
+        if(x == 0.0) return Double.NEGATIVE_INFINITY;
+
 
         double sum = 0;
         int n = 1;
@@ -21,11 +30,11 @@ public class Ln extends MathFunction{
             if(Math.abs(current) < EPS) break;
             if(n >= MAX_ITERATIONS) break;
         }
-        return sum;
+        return round(sum, EPS);
     }
 
-    @Override
-    public double apply(double... args) {
-        return apply(args[0]);
-    }
+//    @Override
+//    public double apply(double... args) {
+//        return apply(args[0]);
+//    }
 }
